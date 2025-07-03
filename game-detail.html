@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Oyun Detay</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f8f8f8;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #974063;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    main {
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+    img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .info {
+      margin: 20px 0;
+    }
+    button {
+      background: #F54768;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .stars {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .star {
+      font-size: 28px;
+      cursor: pointer;
+      color: gray;
+    }
+    .star.selected {
+      color: gold;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .comment-box {
+      margin-top: 30px;
+    }
+    .comment {
+      background: #eee;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+    }
+    iframe {
+      width: 100%;
+      height: 500px;
+      margin-top: 30px;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header><h2>Oyun Detayı</h2></header>
+  <main>
+    <img id="gameImage" />
+    <h1 id="gameName"></h1>
+    <div class="info">
+      <p><strong>Açıklama:</strong> <span id="gameDesc"></span></p>
+      <p><strong>Tür:</strong> <span id="gameGenre"></span></p>
+      <p><strong>Platform:</strong> <span id="gamePlatform"></span></p>
+      <p><strong>Zorluk:</strong> <span id="gameDifficulty"></span></p>
+      <p><strong>Çıkış Tarihi:</strong> <span id="gameDate"></span></p>
+      <p><strong>Fiyat:</strong> <span id="gamePrice"></span></p>
+    </div>
+
+    <button id="buyButton"></button>
+
+    <div id="adminPanel"></div>
+
+    <div>
+      <h3>Oyunu Oyna:</h3>
+      <iframe id="gameFrame" allowfullscreen></iframe>
+    </div>
+
+    <div class="stars" id="ratingStars">
+      ★★★★★
+    </div>
+
+    <div class="comment-box">
+      <h3>Yorum Yaz:</h3>
+      <textarea id="commentInput" placeholder="Yorumunuzu yazın..."></textarea>
+      <button onclick="submitComment()">Gönder</button>
+      <div id="commentList"></div>
+    </div>
+  </main>
+
+  <script>
+    
+    const game = JSON.parse(localStorage.getItem('selectedGame'));
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (!game) {
+      document.body.innerHTML = '<p>Oyun bulunamadı.</p>';
+      throw new Error('Game not found');
+    }
+
+    document.getElementById('gameImage').src = game.image;
+    document.getElementById('gameName').textContent = game.name;
+    document.getElementById('gameDesc').textContent = game.desc;
+    document.getElementById('gameGenre').textContent = game.genre.join(', ');
+    document.getElementById('gamePlatform').textContent = game.platform.join(', ');
+    document.getElementById('gameDifficulty').textContent = game.difficulty;
+    document.getElementById('gameDate').textContent = game.date;
+    document.getElementById('gamePrice').textContent = game.paid ? `${game.price} TL` : 'Ücretsiz';
+    document.getElementById('gameFrame').src = game.url;
+
+   const buyBtn = document.getElementById('buyButton');
+buyBtn.textContent = game.paid ? `Satın Al (${game.price} TL)` : 'Ücretsiz Ekle';
+buyBtn.onclick = () => {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  if (!currentUser) {
+    alert("Lütfen giriş yapın.");
+    return;
+  }
+
+  let library = JSON.parse(localStorage.getItem('library') || '[]');
+
+  // ID ile kontrol et (eski adıyla değil)
+  if (library.includes(game.id)) {
+    alert('Zaten kütüphanede.');
+    return;
+  }
+
+  library.push(game.id);
+  localStorage.setItem('library', JSON.stringify(library));
+  alert('Oyun kütüphaneye eklendi!');
+};
+
+    
+
+    // Admin kontrolü
+    if (currentUser?.username === "Yankı Studio" && currentUser?.password === "oflaz4242" && currentUser?.email === "oflazzmuhammed2009@gmail.com") {
+      const panel = document.getElementById('adminPanel');
+      panel.innerHTML = `
+        <button onclick="removeGame()">Yayından Kaldır</button>
+        <button onclick="editGame()">Düzenle</button>
+        <button onclick="banPublisher()">Yayımcıyı Banla</button>
+      `;
+    }
+
+    function removeGame() {
+      let games = JSON.parse(localStorage.getItem('games') || '[]');
+      games = games.filter(g => g.name !== game.name);
+      localStorage.setItem('games', JSON.stringify(games));
+      alert('Oyun yayından kaldırıldı.');
+      window.location.href = 'index.html';
+    }
+
+    function editGame() {
+      const newName = prompt("Yeni oyun adı:", game.name);
+      const newDesc = prompt("Yeni açıklama:", game.desc);
+      if (newName && newDesc) {
+        let games = JSON.parse(localStorage.getItem('games') || '[]');
+        const idx = games.findIndex(g => g.name === game.name);
+        if (idx !== -1) {
+          games[idx].name = newName;
+          games[idx].desc = newDesc;
+          localStorage.setItem('games', JSON.stringify(games));
+          alert("Oyun bilgileri güncellendi.");
+          location.reload();
+        }
+      }
+    }
+
+    function banPublisher() {
+      const bannedUsers = JSON.parse(localStorage.getItem('bannedUsers') || '[]');
+      bannedUsers.push(game.owner);
+      localStorage.setItem('bannedUsers', JSON.stringify(bannedUsers));
+      alert("Yayımcı başarıyla banlandı: " + game.owner);
+    }
+
+    // Yıldız Sistemi
+    const stars = document.getElementById('ratingStars');
+    let rating = 0;
+    stars.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement('span');
+      star.textContent = '★';
+      star.classList.add('star');
+      star.onclick = () => {
+        rating = i;
+        document.querySelectorAll('.star').forEach((s, idx) => {
+          s.classList.toggle('selected', idx < i);
+        });
+        localStorage.setItem(`rating_${game.name}`, i);
+      };
+      stars.appendChild(star);
+    }
+
+    const savedRating = localStorage.getItem(`rating_${game.name}`);
+    if (savedRating) {
+      document.querySelectorAll('.star').forEach((s, i) => {
+        if (i < savedRating) s.classList.add('selected');
+      });
+    }
+
+    function submitComment() {
+      const text = document.getElementById('commentInput').value.trim();
+      if (!text) return;
+      const comments = JSON.parse(localStorage.getItem(`comments_${game.name}`) || '[]');
+      comments.push(text);
+      localStorage.setItem(`comments_${game.name}`, JSON.stringify(comments));
+      renderComments();
+      document.getElementById('commentInput').value = '';
+    }
+
+    function renderComments() {
+      const comments = JSON.parse(localStorage.getItem(`comments_${game.name}`) || '[]');
+      const list = document.getElementById('commentList');
+      list.innerHTML = '';
+      comments.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.textContent = c;
+        list.appendChild(div);
+      });
+    }
+
+    renderComments();
+  </script>
+  <a href="https://drive.google.com/uc?export=download&id=DOSYA_ID" download>
+    <button>Oyunu İndir</button>
+  </a>
+</body>
+</html>

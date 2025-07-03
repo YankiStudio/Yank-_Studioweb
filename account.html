@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <link rel="icon" type="image/png" href="c:\Users\windows 10\Desktop\Yankı\logo.png.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yankı | Hesap Bilgileri</title>
+  <style>
+    :root {
+      --color-primary: #974063;
+      --color-secondary: #41436A;
+      --color-accent: #F54768;
+      --color-bg-light: #FF9677;
+      --color-bg-dark: #2c2c3e;
+      --color-text-light: #222;
+      --color-text-dark: #eee;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: var(--color-bg-light);
+      color: var(--color-text-light);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body[data-theme="dark"] {
+      background-color: var(--color-bg-dark);
+      color: var(--color-text-dark);
+    }
+    header {
+      background: var(--color-primary);
+      padding: 15px 20px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav button {
+      background: var(--color-accent);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    main {
+      padding: 30px;
+      max-width: 700px;
+      margin: auto;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .info-box {
+      margin-bottom: 20px;
+    }
+    .info-box label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .info-box span {
+      display: block;
+      background: #fff3;
+      padding: 10px;
+      border-radius: 5px;
+      color: inherit;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <header>
+    <div><strong>Yankı Studio</strong> | Hesap</div>
+    <nav>
+      <button onclick="location.href='index.html'">Anasayfa</button>
+      <button id="themeToggle">Koyu Tema</button>
+    </nav>
+  </header>
+  <footer>© 2025 Yankı Studio – Hesap</footer>
+  <main>
+    <h1>Hesap Bilgileri</h1>
+
+    <div class="info-box">
+      <label>Kullanıcı Adı:</label>
+      <span id="username">...</span>
+    </div>
+    <div class="info-box">
+      <label>E-posta:</label>
+      <span id="email">...</span>
+    </div>
+    <div class="info-box">
+      <label>Kayıt Tarihi:</label>
+      <span id="regDate">...</span>
+    </div>
+    <div class="info-box">
+      <label>Hesap ID:</label>
+      <span id="userId">...</span>
+    </div>
+    <div class="info-box">
+      <label>Üyelik Tipi:</label>
+      <span id="userType">...</span>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Yankı Studio – Tüm hakları saklıdır.
+  </footer>
+<script>
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+  if (!currentUser) {
+    alert("Bu sayfayı görüntülemek için giriş yapmalısınız.");
+    window.location.href = "index.html";
+  } else {
+ document.getElementById('username').textContent = currentUser.username;
+document.getElementById('email').textContent = currentUser.email;
+document.getElementById('balance').textContent = currentUser.balance + " ₺";
+document.getElementById('regDate').textContent = currentUser.regDate;
+document.getElementById('userId').textContent = currentUser.userId;
+
+  }
+
+  function logout() {
+    localStorage.removeItem('currentUser');
+    alert("Çıkış yapıldı.");
+    window.location.href = "index.html";
+  }
+</script>
+
+  <script>
+    // Tema sistemi
+    const themeToggleBtn = document.getElementById('themeToggle');
+    themeToggleBtn.addEventListener('click', () => {
+      if (document.body.getAttribute('data-theme') === 'light') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeToggleBtn.textContent = 'Açık Tema';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+        themeToggleBtn.textContent = 'Koyu Tema';
+        localStorage.setItem('theme', 'light');
+      }
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.body.setAttribute('data-theme', savedTheme);
+        themeToggleBtn.textContent = savedTheme === 'light' ? 'Koyu Tema' : 'Açık Tema';
+      }
+    });
+
+   
+    
+  </script>
+  <div class="card">
+  <h2>Hesap Bilgileri</h2>
+  <p><span class="label">Kullanıcı Adı:</span> <span id="username">Yükleniyor...</span></p>
+  <p><span class="label">Email:</span> <span id="email">Yükleniyor...</span></p>
+  <p><span class="label">Bakiye:</span> <span id="balance">Yükleniyor...</span></p>
+  <button onclick="logout()">Çıkış Yap</button>
+</div>
+
+</body>
+</html>
