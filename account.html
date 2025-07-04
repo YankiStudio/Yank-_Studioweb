@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <link rel="icon" type="image/png" href="c:\Users\windows 10\Desktop\Yankı\logo.png.png">
+  <link rel="icon" type="image/png" href="c:\\Users\\windows 10\\Desktop\\Yankı\\logo.png.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Yankı | Hesap Bilgileri</title>
+  <title>Yankı | Kütüphane</title>
   <style>
     :root {
       --color-primary: #974063;
@@ -46,30 +46,52 @@
     }
     main {
       padding: 30px;
-      max-width: 700px;
+      max-width: 1000px;
       margin: auto;
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
     h1 {
       text-align: center;
       margin-bottom: 30px;
     }
-    .info-box {
-      margin-bottom: 20px;
+    .game-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
-    .info-box label {
-      display: block;
+    .game-card {
+      background: var(--color-primary);
+      border-radius: 10px;
+      overflow: hidden;
+      color: white;
+      padding: 15px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .game-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .game-card h3 {
+      margin: 0 0 8px;
+    }
+    .game-card p {
+      flex: 1;
+      font-size: 0.9em;
+      color: #f0d3e4;
+    }
+    .game-card button {
+      background: var(--color-accent);
+      border: none;
+      padding: 6px 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
       font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .info-box span {
-      display: block;
-      background: #fff3;
-      padding: 10px;
-      border-radius: 5px;
-      color: inherit;
     }
     footer {
       text-align: center;
@@ -77,105 +99,183 @@
       color: #666;
       font-size: 0.9em;
     }
-
-    @media (max-width: 600px) {
-      main {
-        padding: 15px;
-      }
-    }
   </style>
 </head>
 <body data-theme="light">
+
   <header>
-    <div><strong>Yankı Studio</strong> | Hesap</div>
+    <div><strong>Yankı Studio</strong> | Kütüphane</div>
     <nav>
       <button onclick="location.href='index.html'">Anasayfa</button>
       <button id="themeToggle">Koyu Tema</button>
     </nav>
   </header>
-  <footer>© 2025 Yankı Studio – Hesap</footer>
-  <main>
-    <h1>Hesap Bilgileri</h1>
 
-    <div class="info-box">
-      <label>Kullanıcı Adı:</label>
-      <span id="username">...</span>
-    </div>
-    <div class="info-box">
-      <label>E-posta:</label>
-      <span id="email">...</span>
-    </div>
-    <div class="info-box">
-      <label>Kayıt Tarihi:</label>
-      <span id="regDate">...</span>
-    </div>
-    <div class="info-box">
-      <label>Hesap ID:</label>
-      <span id="userId">...</span>
-    </div>
-    <div class="info-box">
-      <label>Üyelik Tipi:</label>
-      <span id="userType">...</span>
-    </div>
+  <main>
+    <h1>Yüklediğim Oyunlar</h1>
+    <div class="game-list" id="libraryList"></div>
   </main>
 
-  <footer>
-    © 2025 Yankı Studio – Tüm hakları saklıdır.
-  </footer>
-<script>
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-  if (!currentUser) {
-    alert("Bu sayfayı görüntülemek için giriş yapmalısınız.");
-    window.location.href = "index.html";
-  } else {
- document.getElementById('username').textContent = currentUser.username;
-document.getElementById('email').textContent = currentUser.email;
-document.getElementById('balance').textContent = currentUser.balance + " ₺";
-document.getElementById('regDate').textContent = currentUser.regDate;
-document.getElementById('userId').textContent = currentUser.userId;
-
-  }
-
-  function logout() {
-    localStorage.removeItem('currentUser');
-    alert("Çıkış yapıldı.");
-    window.location.href = "index.html";
-  }
-</script>
+  <footer>© 2025 Yankı Studio – Kütüphane</footer>
 
   <script>
-    // Tema sistemi
     const themeToggleBtn = document.getElementById('themeToggle');
     themeToggleBtn.addEventListener('click', () => {
-      if (document.body.getAttribute('data-theme') === 'light') {
-        document.body.setAttribute('data-theme', 'dark');
-        themeToggleBtn.textContent = 'Açık Tema';
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.body.setAttribute('data-theme', 'light');
-        themeToggleBtn.textContent = 'Koyu Tema';
-        localStorage.setItem('theme', 'light');
-      }
+      const isLight = document.body.getAttribute('data-theme') === 'light';
+      document.body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      themeToggleBtn.textContent = isLight ? 'Açık Tema' : 'Koyu Tema';
+      localStorage.setItem('theme', isLight ? 'dark' : 'light');
     });
+
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
         document.body.setAttribute('data-theme', savedTheme);
         themeToggleBtn.textContent = savedTheme === 'light' ? 'Koyu Tema' : 'Açık Tema';
       }
+      
     });
 
-   
-    
+    function renderLibrary() {
+      const list = document.getElementById('libraryList');
+      let gameIds = JSON.parse(localStorage.getItem('library') || '[]');
+      let allGames = JSON.parse(localStorage.getItem('games') || '[]');
+      let favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+      // Yalnızca kütüphane oyunlarını filtrele
+      let games = allGames.filter(g => gameIds.includes(g.id));
+
+      // Favorileri öne al
+      games.sort((a, b) => {
+        const aFav = favs.includes(a.id);
+        const bFav = favs.includes(b.id);
+        return (bFav - aFav);
+      });
+
+      list.innerHTML = '';
+      games.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `
+          <img src="${game.image}" alt="${game.name}" onerror="this.src='https://via.placeholder.com/300x150'" />
+          <h3>${game.name}</h3>
+          <p>${game.desc}</p>
+          <button onclick="deleteGame('${game.id}')">Sil</button>
+          <button onclick="toggleFavorite('${game.id}')">
+            ${favs.includes(game.id) ? 'Favoriden Çıkar' : 'Favorilere Ekle'}
+          </button>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function deleteGame(id) {
+      let lib = JSON.parse(localStorage.getItem('library') || '[]');
+      lib = lib.filter(i => i !== id);
+      localStorage.setItem('library', JSON.stringify(lib));
+      
+    }
+
+    function toggleFavorite(id) {
+      let favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+      if (favs.includes(id)) {
+        favs = favs.filter(f => f !== id);
+      } else {
+        favs.push(id);
+      }
+      localStorage.setItem('favorites', JSON.stringify(favs));
+      
+    }
   </script>
-  <div class="card">
-  <h2>Hesap Bilgileri</h2>
-  <p><span class="label">Kullanıcı Adı:</span> <span id="username">Yükleniyor...</span></p>
-  <p><span class="label">Email:</span> <span id="email">Yükleniyor...</span></p>
-  <p><span class="label">Bakiye:</span> <span id="balance">Yükleniyor...</span></p>
-  <button onclick="logout()">Çıkış Yap</button>
-</div>
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+
+<script>
+  const firebaseConfig = {
+      apiKey: "AIzaSyCEnHNZh6MZ1bZWDsBYA3nEm1ZvhDxI38s",
+  authDomain: "yankistudioweb.firebaseapp.com",
+  projectId: "yankistudioweb",
+  storageBucket: "yankistudioweb.firebasestorage.app",
+  messagingSenderId: "1036422092091",
+  appId: "1:1036422092091:web:1651d21b5d91643499131e",
+  measurementId: "G-FDK6DNW7H3"
+  };
+
+  // 🚀 Firebase'i başlat
+  const app = firebase.initializeApp(firebaseConfig);
+
+  // 🗄️ Firestore'u başlat
+  const db = firebase.firestore();
+</script>
+<script>
+  const userUid = {};
+  const list = document.getElementById('libraryList');
+
+  firebase.auth().onAuthStateChanged(async user => {
+    if (!user || !user.emailVerified) {
+      alert("Lütfen giriş yapınız.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    userUid.uid = user.uid;
+    const gamesSnap = await db.collection("games").get();
+    const allGames = gamesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const data = userDoc.exists ? userDoc.data() : { library: [], favorites: [] };
+
+    let games = allGames.filter(g => (data.library || []).includes(g.id));
+
+    games.sort((a, b) => {
+      const aFav = (data.favorites || []).includes(a.id);
+      const bFav = (data.favorites || []).includes(b.id);
+      return (bFav - aFav);
+    });
+
+    list.innerHTML = '';
+    games.forEach(game => {
+      const card = document.createElement('div');
+      card.className = 'game-card';
+      card.innerHTML = `
+        <img src="${game.image}" alt="${game.name}" onerror="this.src='https://via.placeholder.com/300x150'" />
+        <h3>${game.name}</h3>
+        <p>${game.desc || ''}</p>
+        <button onclick="deleteGame('${game.id}')">Sil</button>
+        <button onclick="toggleFavorite('${game.id}')">
+          ${(data.favorites || []).includes(game.id) ? 'Favoriden Çıkar' : 'Favorilere Ekle'}
+        </button>
+      `;
+      list.appendChild(card);
+    });
+  });
+
+  async function deleteGame(id) {
+    const userRef = db.collection("users").doc(userUid.uid);
+    const userDoc = await userRef.get();
+    const data = userDoc.data();
+    const updatedLib = (data.library || []).filter(g => g !== id);
+    await userRef.update({ library: updatedLib });
+    location.reload();
+  }
+
+  async function toggleFavorite(id) {
+    const userRef = db.collection("users").doc(userUid.uid);
+    const userDoc = await userRef.get();
+    const data = userDoc.data();
+    let favs = data.favorites || [];
+    if (favs.includes(id)) {
+      favs = favs.filter(f => f !== id);
+    } else {
+      favs.push(id);
+    }
+    await userRef.update({ favorites: favs });
+    location.reload();
+  }
+</script>
 
 </body>
 </html>
