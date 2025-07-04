@@ -751,30 +751,6 @@ db.collection("games").get().then(snapshot => {
 
 
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAjFjZgYhGIU6zj3fCKvn5YCNr2TaFj-wg",
-    authDomain: "yanki-studio.firebaseapp.com",
-    projectId: "yanki-studio",
-    storageBucket: "yanki-studio.firebasestorage.app",
-    messagingSenderId: "485489686683",
-    appId: "1:485489686683:web:d54a1b56505f3543a7ee3e"
-  };
-
-  // 🚀 Firebase'i başlat
-  const app = firebase.initializeApp(firebaseConfig);
-
-  // 🗄️ Firestore'u başlat
-  const db = firebase.firestore();
-
-  // (Opsiyonel) Kullanıcı oturum işlemleri için
-  const auth = firebase.auth();
-</script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
 
@@ -793,6 +769,29 @@ db.collection("games").get().then(snapshot => {
     void ripple.offsetWidth; // Reflow
     ripple.classList.add('animate-ripple');
   }
+</script>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCEnHNZh6MZ1bZWDsBYA3nEm1ZvhDxI38s",
+    authDomain: "yankistudioweb.firebaseapp.com",
+    projectId: "yankistudioweb",
+    storageBucket: "yankistudioweb.appspot.com",
+    messagingSenderId: "1036422092091",
+    appId: "1:1036422092091:web:1651d21b5d91643499131e"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.auth().onAuthStateChanged(user => {
+    const statusEl = document.getElementById("authStatus");
+    if (user && user.emailVerified) {
+      statusEl.textContent = `✅ Giriş Yapıldı: ${user.email}`;
+    } else {
+      statusEl.textContent = `🔐 Giriş yapılmadı.`;
+    }
+  });
 </script>
 
   </body>
