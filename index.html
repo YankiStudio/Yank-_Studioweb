@@ -258,9 +258,53 @@
         gap: 10px;
       }     
     }
-    
+   
+  .animate-ripple {
+    animation: rippleAnim 0.6s ease-out;
+  }
+  @keyframes rippleAnim {
+    from {
+      transform: scale(0);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  .animate-ripple {
+    animation: rippleAnim 0.6s ease-out;
+  }
+
+  @keyframes rippleAnim {
+    from {
+      transform: scale(0);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  .btn-bounce {
+    animation: bounceTap 0.25s ease;
+  }
+
+  @keyframes bounceTap {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.96); }
+    100% { transform: scale(1); }
+  }
+
+
+
   </style>
+  
 </head>
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <body data-theme="light">
   <header>
     <div style="display: flex; align-items: center; gap: 10px;">
@@ -271,7 +315,41 @@
     <nav>
       <input type="text" id="searchInput" placeholder="Oyun Ara..." />
       <button id="themeToggle">Koyu Tema</button>
-      <button id="loginButton">Giriş Yap / Kayıt Ol</button>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-10">
+
+  <!-- Giriş Yap Butonu -->
+  <a href="login.html"
+     onclick="ripple(event)"
+     class="relative inline-flex items-center justify-center px-7 py-3 overflow-hidden font-semibold text-white transition duration-300 ease-out rounded-xl shadow-lg group bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 dark:from-blue-500 dark:to-blue-700">
+    
+    <!-- Glow Efekti -->
+    <span class="absolute inset-0 w-full h-full bg-blue-400 opacity-0 group-hover:opacity-20 blur-xl transition duration-500"></span>
+    
+    <!-- Lucide İkon + Metin -->
+    <span class="relative z-10 flex items-center gap-2">
+      <i data-lucide="log-in" class="w-5 h-5"></i> Giriş Yap
+    </span>
+    
+    <!-- Ripple efekti için -->
+    <span class="ripple-effect absolute rounded-full bg-white opacity-20 scale-0 z-0"></span>
+  </a>
+
+  <!-- Kayıt Ol Butonu -->
+  <a href="signup.html"
+     onclick="ripple(event)"
+     class="relative inline-flex items-center justify-center px-7 py-3 overflow-hidden font-semibold text-white transition duration-300 ease-out rounded-xl shadow-lg group bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 dark:from-green-500 dark:to-green-700">
+    
+    <span class="absolute inset-0 w-full h-full bg-green-400 opacity-0 group-hover:opacity-20 blur-xl transition duration-500"></span>
+    
+    <span class="relative z-10 flex items-center gap-2">
+      <i data-lucide="user-plus" class="w-5 h-5"></i> Kayıt Ol
+    </span>
+    
+    <span class="ripple-effect absolute rounded-full bg-white opacity-20 scale-0 z-0"></span>
+  </a>
+
+</div>
+
       <script>
   // Giriş yapan kullanıcıyı al
   const currentUser1 = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -379,6 +457,43 @@
 
   <footer>© 2025 Yankı Studio – Kütüphane</footer>
 </body>
+
+  <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_22c6811f47.mp3" preload="auto"></audio>
+  
+  <!-- Butonlar burada -->
+   
+  <!-- yukarıdaki kodları ekle -->
+
+
+   <style>
+  .animate-ripple {
+    animation: rippleAnim 0.6s ease-out;
+  }
+
+  @keyframes rippleAnim {
+    from {
+      transform: scale(0);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  .btn-bounce {
+    animation: bounceTap 0.25s ease;
+  }
+
+  @keyframes bounceTap {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.96); }
+    100% { transform: scale(1); }
+  }
+</style>
+
+<
+
   <!-- CSS kodları burada olacak -->
 </head>
 <body data-theme="light">
@@ -386,6 +501,32 @@
 
   <!-- JavaScript kodları -->
   <script>
+    function oyunYukle(game) {
+  db.collection("pending_games").add(game)
+    .then(() => alert("Oyun admin onayına gönderildi"))
+    .catch(err => console.error("Hata:", err));
+}
+function getPendingGames() {
+  db.collection("pending_games").get().then(snapshot => {
+    snapshot.forEach(doc => {
+      const game = doc.data();
+      // Admin paneline göster
+    });
+  });
+}
+
+function onayla(docId, gameData) {
+  db.collection("games").add(gameData).then(() => {
+    db.collection("pending_games").doc(docId).delete();
+  });
+}
+db.collection("games").get().then(snapshot => {
+  snapshot.forEach(doc => {
+    const game = doc.data();
+    // Oyunu index sayfasına göster
+  });
+});
+
     document.addEventListener("DOMContentLoaded", () => {
       const themeToggleBtn = document.getElementById('themeToggle');
       const authModal = document.getElementById('authModal');
@@ -606,5 +747,53 @@
     loginForm.classList.remove('active');
   });
   </script>
+
+
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjFjZgYhGIU6zj3fCKvn5YCNr2TaFj-wg",
+    authDomain: "yanki-studio.firebaseapp.com",
+    projectId: "yanki-studio",
+    storageBucket: "yanki-studio.firebasestorage.app",
+    messagingSenderId: "485489686683",
+    appId: "1:485489686683:web:d54a1b56505f3543a7ee3e"
+  };
+
+  // 🚀 Firebase'i başlat
+  const app = firebase.initializeApp(firebaseConfig);
+
+  // 🗄️ Firestore'u başlat
+  const db = firebase.firestore();
+
+  // (Opsiyonel) Kullanıcı oturum işlemleri için
+  const auth = firebase.auth();
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+
+<script>
+  lucide.createIcons();
+
+  function ripple(e) {
+    const btn = e.currentTarget;
+    const ripple = btn.querySelector('.ripple-effect');
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    ripple.classList.remove('animate-ripple');
+    void ripple.offsetWidth; // Reflow
+    ripple.classList.add('animate-ripple');
+  }
+</script>
+
   </body>
 </html>
