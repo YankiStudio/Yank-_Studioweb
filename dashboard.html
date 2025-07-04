@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kontrol Paneli</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white">
+
+  <div class="bg-white/10 backdrop-blur-md p-8 rounded-xl shadow-lg text-center max-w-md w-full">
+    <h1 class="text-3xl font-bold mb-4">🎉 Hoş Geldiniz!</h1>
+    <p class="mb-6 text-lg">Giriş işleminiz başarılı oldu.</p>
+    <button onclick="logout()" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white">Çıkış Yap</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCEnHNZh6MZ1bZWDsBYA3nEm1ZvhDxI38s",
+      authDomain: "yankistudioweb.firebaseapp.com",
+      projectId: "yankistudioweb",
+      storageBucket: "yankistudioweb.appspot.com",
+      messagingSenderId: "1036422092091",
+      appId: "1:1036422092091:web:1651d21b5d91643499131e"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Oturum kontrolü: Doğrudan erişimi engelle
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || !user.emailVerified) {
+        window.location.href = "index.html"; // giriş sayfası
+      }
+    });
+
+    // Çıkış yap
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";
+      });
+    }
+  </script>
+
+</body>
+</html>
