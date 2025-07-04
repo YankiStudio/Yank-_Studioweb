@@ -3,9 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dinamik Kayıt Sayfası</title>
+  <title>Giriş / Kayıt</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
   <style>
+    @keyframes waveAnim {
+      0% { transform: translateX(0) translateY(50%); }
+      100% { transform: translateX(-50%) translateY(50%); }
+    }
     @keyframes backgroundShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -13,7 +20,6 @@
     }
     body {
       margin: 0;
-      height: 100vh;
       background: linear-gradient(45deg, #001f3f, #000814, #003366);
       background-size: 600% 600%;
       animation: backgroundShift 20s ease infinite;
@@ -29,193 +35,123 @@
       animation: waveAnim 8s linear infinite;
       transform: translateY(50%);
     }
-    @keyframes waveAnim {
-      0% { transform: translateX(0) translateY(50%); }
-      100% { transform: translateX(-50%) translateY(50%); }
-    }
-    .container {
-      backdrop-filter: blur(12px);
-      background: rgba(10,25,50,0.5);
-      border-radius: 16px;
-      padding: 2rem;
-      max-width: 380px;
-      margin: 2rem;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-      transition: transform .3s;
-    }
-    .container:hover { transform: translateY(-8px); }
-    input {
-      transition: transform .2s, background .3s;
-    }
-    input:focus { transform: scale(1.02); background: rgba(255,255,255,0.6); }
-    .btn::after {
-      transition: width .6s ease-out, height .6s ease-out, opacity .6s ease-out;
-    }
-    .btn:active::after {
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.4);
-      border-radius: 50%;
-      content: '';
-      position: absolute;
-      top:50%;
-      left:50%;
-      transform: translate(-50%,-50%);
-      opacity: 0;
-      animation: ripple 0.6s ease-out;
-    }
-    @keyframes ripple {
-      from { opacity: .6; }
-      to { width:0; height:0; opacity:0; }
-    }
-    #message { margin-top:1rem; text-align:center; font-weight:500; }
-    canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; }
   </style>
 </head>
-<body class="flex justify-center items-center text-gray-200">
-
-  <!-- Dalga animasyonu -->
+<body class="flex items-center justify-center min-h-screen text-white transition-colors duration-300 dark:bg-black">
   <svg id="wave" viewBox="0 0 1200 200">
     <path fill="#001f3f" d="M0,100 C300,200 900,0 1200,100 L1200,200 L0,200 Z"/>
   </svg>
 
-  <!-- Confetti canvas -->
-  <canvas id="confetti"></canvas>
-
-  <!-- Fare takipli parçacık efekti -->
-  <canvas id="mouseParticles"></canvas>
-
-  <div class="container">
-    <h2 class="text-2xl font-bold text-center mb-6">🌌 Kayıt Ol</h2>
-    <div class="relative"><input id="username" type="text" placeholder="Kullanıcı Adı"
-      class="w-full py-2 px-4 rounded-md mb-4 bg-gray-100 bg-opacity-20 text-white"/></div>
-    <div class="relative"><input id="email" type="email" placeholder="E‑posta"
-      class="w-full py-2 px-4 rounded-md mb-4 bg-gray-100 bg-opacity-20 text-white"/></div>
-    <div class="relative">
-      <input id="password" type="password" placeholder="Şifre"
-        class="w-full py-2 px-4 rounded-md mb-4 bg-gray-100 bg-opacity-20 text-white pr-12"/>
-      <span id="togglePwd" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-300 cursor-pointer hover:text-white">Göster</span>
+  <div class="w-full max-w-md p-6 mx-4 rounded-2xl bg-white/10 backdrop-blur-lg shadow-xl">
+    <div class="flex justify-between mb-6">
+      <h2 class="text-2xl font-semibold" id="formTitle">🔐 Giriş Yap</h2>
+      <button id="toggleMode" class="text-sm text-blue-300 hover:underline">🌙</button>
     </div>
-    <button class="btn w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md relative overflow-hidden"
-      onclick="register()">Kayıt Ol</button>
-    <div id="message"></div>
+    <div id="usernameGroup" class="hidden">
+      <input id="username" type="text" placeholder="Kullanıcı Adı"
+        class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+    </div>
+    <input id="email" type="email" placeholder="E-posta"
+      class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+    <input id="password" type="password" placeholder="Şifre"
+      class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+    <div class="flex items-center mb-4">
+      <input id="rememberMe" type="checkbox" class="mr-2">
+      <label for="rememberMe" class="text-sm">Beni hatırla</label>
+    </div>
+    <button id="authButton" onclick="login()" class="w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition">
+      Giriş Yap
+    </button>
+    <p class="mt-4 text-sm text-center">
+      <span id="toggleText">Hesabınız yok mu?</span>
+      <button onclick="switchMode()" class="text-blue-300 hover:underline" id="switchBtn">Kayıt Ol</button>
+    </p>
+    <div id="message" class="mt-4 text-sm text-center font-medium"></div>
   </div>
 
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyAjFjZgYhGIU6zj3fCKvn5YCNr2TaFj-wg",
-      authDomain: "yanki-studio.firebaseapp.com",
-      projectId: "yanki-studio",
-      storageBucket: "yanki-studio.firebasestorage.app",
-      messagingSenderId: "485489686683",
-      appId: "1:485489686683:web:d54a1b56505f3543a7ee3e"
+      apiKey: "AIzaSyCEnHNZh6MZ1bZWDsBYA3nEm1ZvhDxI38s",
+      authDomain: "yankistudioweb.firebaseapp.com",
+      projectId: "yankistudioweb",
+      storageBucket: "yankistudioweb.appspot.com",
+      messagingSenderId: "1036422092091",
+      appId: "1:1036422092091:web:1651d21b5d91643499131e"
     };
     firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
   </script>
 
   <script>
-    // Şifre göster/gizle
-    const pwd = document.getElementById('password'),
-          tg = document.getElementById('togglePwd');
-    tg.onclick = () => {
-      const show = pwd.type==='password';
-      pwd.type = show ? 'text' : 'password';
-      tg.textContent = show ? 'Gizle' : 'Göster';
-    };
+    let isLogin = true;
 
-    // Konfetti animasyonu
-    const confCanvas = document.getElementById('confetti'),
-          confCtx = confCanvas.getContext('2d');
-    let Wc, Hc, conf = [];
-    function confResize(){ Wc=confCanvas.width=innerWidth; Hc=confCanvas.height=innerHeight; }
-    window.addEventListener('resize', confResize); confResize();
-    function confInit(){
-      conf = Array.from({length:130}, ()=>({
-        x:Math.random()*Wc, y:Math.random()*Hc-Hc,
-        r:Math.random()*5+3, d:Math.random()*200+100,
-        color:`hsl(210,60%,${Math.random()*30+40}%)`,
-        tilt:Math.random()*10-10, tA:(Math.random()*.07)+.05, t:0
-      }));
+    function switchMode() {
+      isLogin = !isLogin;
+      document.getElementById('formTitle').textContent = isLogin ? '🔐 Giriş Yap' : '🆕 Kayıt Ol';
+      document.getElementById('authButton').textContent = isLogin ? 'Giriş Yap' : 'Kayıt Ol';
+      document.getElementById('toggleText').textContent = isLogin ? 'Hesabınız yok mu?' : 'Zaten hesabınız var mı?';
+      document.getElementById('switchBtn').textContent = isLogin ? 'Kayıt Ol' : 'Giriş Yap';
+      document.getElementById('message').textContent = '';
+      document.getElementById('usernameGroup').classList.toggle('hidden', isLogin);
     }
-    function confDraw(){
-      confCtx.clearRect(0,0,Wc,Hc);
-      conf.forEach(p=>{
-        p.t += p.tA;
-        p.y += (Math.cos(p.d)+3+p.r/2)/2;
-        p.x += Math.sin(p.d);
-        p.tilt = Math.sin(p.t)*10;
-        confCtx.beginPath();
-        confCtx.lineWidth = p.r;
-        confCtx.strokeStyle = p.color;
-        confCtx.moveTo(p.x+p.tilt, p.y);
-        confCtx.lineTo(p.x+p.tilt+p.r/2, p.y+p.tilt+p.r/2);
-        confCtx.stroke();
+
+    function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const message = document.getElementById('message');
+      const remember = document.getElementById('rememberMe').checked;
+
+      if (!email || !password || (!isLogin && !username)) {
+        message.textContent = '⚠️ Lütfen tüm alanları doldurunuz.';
+        message.className = 'text-yellow-400';
+        return;
+      }
+
+      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      firebase.auth().setPersistence(persistence).then(() => {
+        if (isLogin) {
+          return firebase.auth().signInWithEmailAndPassword(email, password);
+        } else {
+          return firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(async ({ user }) => {
+              await db.collection("users").doc(user.uid).set({ username, email });
+              await user.sendEmailVerification();
+              throw new Error('📧 Kayıt başarılı. Lütfen e‑posta adresinizi doğrulayın.');
+            });
+        }
+      }).then(({ user }) => {
+        if (!user.emailVerified) {
+          message.textContent = '📧 Lütfen e‑posta adresinizi doğrulayın.';
+          message.className = 'text-red-400';
+          return;
+        }
+        message.textContent = '✅ Başarıyla giriş yapıldı!';
+        message.className = 'text-green-400';
+        setTimeout(() => window.location.href = 'dashboard.html', 1500);
+      }).catch(err => {
+        let msg = err.message || '❌ Hata oluştu.';
+        if (err.code === 'auth/user-not-found') msg = '🚫 Kullanıcı bulunamadı.';
+        else if (err.code === 'auth/wrong-password') msg = '🔑 Hatalı şifre.';
+        else if (err.code === 'auth/email-already-in-use') msg = '📧 Bu e-posta zaten kayıtlı.';
+        else if (err.code === 'auth/invalid-email') msg = '📧 Geçersiz e-posta.';
+        else if (msg.includes('doğrulayın')) {
+          message.textContent = msg;
+          message.className = 'text-blue-400';
+          return;
+        }
+        message.textContent = msg;
+        message.className = 'text-red-400';
       });
-      requestAnimationFrame(confDraw);
     }
-    function confBurst(){ confInit(); confDraw(); setTimeout(()=>conf=[],4000); }
 
-    // Fare takip parçacıkları
-    const mpCanvas = document.getElementById('mouseParticles'),
-          mpCtx = mpCanvas.getContext('2d');
-    let Wm,Hm, particles = [];
-    function mpResize(){ Wm=mpCanvas.width=innerWidth; Hm=mpCanvas.height=innerHeight; }
-    window.addEventListener('resize', mpResize); mpResize();
-    document.addEventListener('mousemove', e=>{
-      for(let i=0;i<4;i++){
-        particles.push({
-          x: e.clientX, y: e.clientY,
-          vx: (Math.random()-0.5)*0.8,
-          vy: (Math.random()-0.5)*0.8,
-          alpha: 0.7,
-          size: Math.random()*3+1,
-          color: `hsl(${210+Math.random()*20}, 30%, ${60+Math.random()*10}%)`
-        });
-      }
-    });
-    function mpDraw(){
-      mpCtx.clearRect(0,0,Wm,Hm);
-      for(let i=particles.length-1;i>=0;i--){
-        const p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.alpha -= 0.01;
-        if(p.alpha<=0){ particles.splice(i,1); continue; }
-        mpCtx.globalAlpha = p.alpha;
-        mpCtx.beginPath();
-        mpCtx.arc(p.x,p.y,p.size,0,2*Math.PI);
-        mpCtx.fillStyle = p.color;
-        mpCtx.fill();
-      }
-      mpCtx.globalAlpha = 1;
-      requestAnimationFrame(mpDraw);
-    }
-    mpDraw();
-
-    // Kayıt işlevi
-    function register(){
-      const u = document.getElementById('username').value.trim(),
-            e = document.getElementById('email').value.trim(),
-            pVal = pwd.value.trim(),
-            m = document.getElementById('message');
-      if(!u||!e||!pVal){
-        m.textContent = '⚠️ Lütfen tüm alanları doldurun.';
-        m.className = 'text-yellow-300'; return;
-      }
-      firebase.auth().createUserWithEmailAndPassword(e,pVal)
-        .then(uc => uc.user.updateProfile({ displayName: u }))
-        .then(()=>{
-          m.textContent = '✅ Başarıyla kaydoldunuz!';
-          m.className = 'text-blue-300';
-          confBurst();
-          setTimeout(()=>window.location.href='index.html',5000);
-        })
-        .catch(err => {
-          m.textContent = '❌ Hata: '+err.message;
-          m.className = 'text-red-400';
-        });
-    }
+    document.getElementById('toggleMode').onclick = () => {
+      document.documentElement.classList.toggle('dark');
+    };
   </script>
 </body>
 </html>
