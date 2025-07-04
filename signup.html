@@ -3,46 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Giriş Yap</title>
+  <title>Kayıt Ol</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { darkMode: 'class' };
+    tailwind.config = { darkMode: 'class' }
   </script>
-  <style>
-    body {
-      background: linear-gradient(45deg, #001f3f, #000814, #003366);
-      background-size: 600% 600%;
-      animation: backgroundShift 20s ease infinite;
-    }
-    @keyframes backgroundShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-  </style>
 </head>
-<body class="flex items-center justify-center min-h-screen text-white dark:bg-black transition-colors duration-300">
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-900 to-black text-white">
+  <div class="w-full max-w-md p-6 rounded-2xl bg-white/10 backdrop-blur-lg shadow-xl">
+    <h2 class="text-2xl font-semibold mb-6 text-center">👤 Kayıt Ol</h2>
 
-  <div class="w-full max-w-md p-6 rounded-2xl bg-white/10 backdrop-blur-md shadow-xl">
-    <div class="flex justify-between mb-6">
-      <h2 class="text-2xl font-semibold">🔐 Giriş Yap</h2>
-      <button id="toggleMode" class="text-sm text-blue-300 hover:underline">🌙</button>
-    </div>
-    
-    <input id="username" type="text" placeholder="Kullanıcı Adı" class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-    <input id="email" type="email" placeholder="E-posta" class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-    
-    <div class="relative mb-4">
-      <input id="password" type="password" placeholder="Şifre" class="w-full px-4 py-2 pr-12 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
-      <span id="togglePwd" class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-300 hover:text-white cursor-pointer">Göster</span>
-    </div>
+    <input id="username" type="text" placeholder="Kullanıcı Adı"
+      class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-    <div class="flex items-center mb-4">
-      <input id="rememberMe" type="checkbox" class="mr-2">
-      <label for="rememberMe" class="text-sm">Beni hatırla</label>
-    </div>
+    <input id="email" type="email" placeholder="E-posta"
+      class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-    <button onclick="login()" class="w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition">Giriş Yap</button>
+    <input id="password" type="password" placeholder="Şifre (min 6 karakter)"
+      class="w-full mb-4 px-4 py-2 rounded-md bg-gray-100 bg-opacity-20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+    <button onclick="registerUser()"
+      class="w-full py-2 rounded-md bg-green-600 hover:bg-green-700 text-white font-medium transition">Kayıt Ol</button>
+
     <div id="message" class="mt-4 text-sm text-center font-medium"></div>
   </div>
 
@@ -56,59 +38,47 @@
       projectId: "yankistudioweb",
       storageBucket: "yankistudioweb.appspot.com",
       messagingSenderId: "1036422092091",
-      appId: "1:1036422092091:web:1651d21b5d91643499131e"
+      appId: "1:1036422092091:web:1651d21b5d91643499131e",
+      measurementId: "G-FDK6DNW7H3"
     };
     firebase.initializeApp(firebaseConfig);
   </script>
-
   <script>
-    document.getElementById('togglePwd').onclick = () => {
-      const pwd = document.getElementById('password');
-      const isHidden = pwd.type === 'password';
-      pwd.type = isHidden ? 'text' : 'password';
-      togglePwd.textContent = isHidden ? 'Gizle' : 'Göster';
-    };
-
-    document.getElementById('toggleMode').onclick = () => {
-      document.documentElement.classList.toggle('dark');
-    };
-
-    function login() {
+    function registerUser() {
+      const username = document.getElementById('username').value.trim();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
-      const username = document.getElementById('username').value.trim();
       const message = document.getElementById('message');
-      const remember = document.getElementById('rememberMe').checked;
 
-      if (!email || !password || !username) {
-        message.textContent = '⚠️ Lütfen tüm alanları doldurun.';
-        message.className = 'text-yellow-400 text-sm text-center font-medium mt-4';
+      if (!username || !email || !password) {
+        message.textContent = "⚠️ Lütfen tüm alanları doldurun.";
+        message.className = "text-yellow-400 text-sm text-center font-medium mt-4";
         return;
       }
 
-      const persistence = remember ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      if (password.length < 6) {
+        message.textContent = "🔒 Şifre en az 6 karakter olmalı.";
+        message.className = "text-yellow-400 text-sm text-center font-medium mt-4";
+        return;
+      }
 
-      firebase.auth().setPersistence(persistence).then(() => {
-        return firebase.auth().signInWithEmailAndPassword(email, password);
-      }).then(({ user }) => {
-        user.reload().then(() => {
-          if (!user.emailVerified) {
-            message.textContent = '📧 Lütfen e-posta adresinizi doğrulayın.';
-            message.className = 'text-red-400 text-sm text-center font-medium mt-4';
-          } else {
-            message.textContent = '✅ Giriş başarılı, yönlendiriliyorsunuz...';
-            message.className = 'text-green-400 text-sm text-center font-medium mt-4';
-            setTimeout(() => window.location.href = 'dashboard.html', 2000);
-          }
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(({ user }) => {
+          return user.updateProfile({ displayName: username }).then(() => {
+            return user.sendEmailVerification();
+          });
+        })
+        .then(() => {
+          message.textContent = "✅ Kayıt başarılı! E‑posta adresinize doğrulama gönderildi.";
+          message.className = "text-green-400 text-sm text-center font-medium mt-4";
+        })
+        .catch(err => {
+          let msg = "❌ Hata: " + err.message;
+          if (err.code === "auth/email-already-in-use") msg = "📧 Bu e-posta zaten kullanılıyor.";
+          else if (err.code === "auth/invalid-email") msg = "📧 Geçersiz e-posta adresi.";
+          message.textContent = msg;
+          message.className = "text-red-400 text-sm text-center font-medium mt-4";
         });
-      }).catch(error => {
-        let msg = '❌ Hata: ' + error.message;
-        if (error.code === 'auth/user-not-found') msg = '🚫 Kullanıcı bulunamadı.';
-        else if (error.code === 'auth/wrong-password') msg = '🔑 Hatalı şifre.';
-        else if (error.code === 'auth/invalid-email') msg = '📧 Geçersiz e-posta.';
-        message.textContent = msg;
-        message.className = 'text-red-400 text-sm text-center font-medium mt-4';
-      });
     }
   </script>
 </body>
