@@ -523,13 +523,24 @@
   firebase.initializeApp(firebaseConfig);
 
   firebase.auth().onAuthStateChanged(user => {
-    const statusEl = document.getElementById("authStatus");
     if (user && user.emailVerified) {
       statusEl.textContent = `✅ Giriş Yapıldı: ${user.email}`;
-    } else {
-      statusEl.textContent = `🔐 Giriş yapılmadı.`;
+      if (loginButton) {
+        loginButton.innerHTML = `<span class="relative z-10">👤 ${user.email}</span>`;
+        loginButton.style.pointerEvents = 'none';
+      }
+
+      // Admin kontrolü
+      firebase.firestore().collection("users").doc(user.uid).get().then(doc => {
+        if (doc.exists && doc.data().userType === 'admin') {
+          const adminBanner = document.createElement('div');
+          adminBanner.textContent = "🛠 Bu hesaba yönetici yetkileri atanmıştır.";
+          adminBanner.style = "background:#222;padding:10px;border-radius:8px;margin-bottom:10px;color:#0f0;font-weight:bold;text-align:center";
+          document.body.insertBefore(adminBanner, document.body.firstChild);
+        }
+      });
     }
-  });
+});
 </script>
 
   </body>
