@@ -317,37 +317,48 @@
       <button id="themeToggle">Koyu Tema</button>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-10">
 
-  <!-- Giriş Yap Butonu -->
-  <a href="login.html"
-     onclick="ripple(event)"
-     class="relative inline-flex items-center justify-center px-7 py-3 overflow-hidden font-semibold text-white transition duration-300 ease-out rounded-xl shadow-lg group bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-500 hover:to-blue-700 dark:from-blue-500 dark:to-blue-700">
-    
-    <!-- Glow Efekti -->
-    <span class="absolute inset-0 w-full h-full bg-blue-400 opacity-0 group-hover:opacity-20 blur-xl transition duration-500"></span>
-    
-    <!-- Lucide İkon + Metin -->
-    <span class="relative z-10 flex items-center gap-2">
-      <i data-lucide="log-in" class="w-5 h-5"></i> Giriş Yap
-    </span>
-    
-    <!-- Ripple efekti için -->
-    <span class="ripple-effect absolute rounded-full bg-white opacity-20 scale-0 z-0"></span>
-  </a>
+  <button onclick="window.location.href='login.html'" class="login-btn">giriş yap</button>
 
-  <!-- Kayıt Ol Butonu -->
-  <a href="signup.html"
-     onclick="ripple(event)"
-     class="relative inline-flex items-center justify-center px-7 py-3 overflow-hidden font-semibold text-white transition duration-300 ease-out rounded-xl shadow-lg group bg-gradient-to-br from-green-600 to-green-800 hover:from-green-500 hover:to-green-700 dark:from-green-500 dark:to-green-700">
-    
-    <span class="absolute inset-0 w-full h-full bg-green-400 opacity-0 group-hover:opacity-20 blur-xl transition duration-500"></span>
-    
-    <span class="relative z-10 flex items-center gap-2">
-      <i data-lucide="user-plus" class="w-5 h-5"></i> Kayıt Ol
-    </span>
-    
-    <span class="ripple-effect absolute rounded-full bg-white opacity-20 scale-0 z-0"></span>
-  </a>
+<style>
+.login-btn {
+  padding: 12px 28px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.login-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+</style>
 
+ </a>
+
+  <button onclick="window.location.href='signup.html'" class="signup-btn">Kayıt Ol</button>
+<style>
+.signup-btn {
+  padding: 12px 28px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.signup-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+</style>
+
+  
 </div>
 
       
@@ -439,7 +450,7 @@
     </a>
   </div>
 
-  <footer>© 2025 Yankı Studio – Kütüphane</footer>
+  <footer>© 2025 Yankı Studio – Ana Sayfa</footer>
 </body>
 
   <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_22c6811f47.mp3" preload="auto"></audio>
@@ -537,6 +548,7 @@
           adminBanner.textContent = "🛠 Bu hesaba yönetici yetkileri atanmıştır.";
           adminBanner.style = "background:#222;padding:10px;border-radius:8px;margin-bottom:10px;color:#0f0;font-weight:bold;text-align:center";
           document.body.insertBefore(adminBanner, document.body.firstChild);
+          
         }
       });
     }
